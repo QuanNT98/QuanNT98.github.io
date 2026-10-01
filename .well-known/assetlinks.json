@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.synergy.app",
+      "sha256_cert_fingerprints": ["38:A6:EE:6B:51:69:9B:20:53:11:94:07:E6:89:00:64:3F:76:77:56:DF:42:AE:C4:B0:55:CF:93:C1:3C:D7:C5"]
+    }
+  }
+]
