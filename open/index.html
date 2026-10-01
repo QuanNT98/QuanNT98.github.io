@@ -34,7 +34,7 @@
     <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M6.6 7.2 9.6 10M17.4 7.2 14.4 10M6.6 16.8 9.6 14M17.4 16.8 14.4 14"/></svg>
   </div>
   <h1>Mở ứng dụng trong Synergy</h1>
-  <p class="lead">Ứng dụng này chạy bên trong super app <b>Mạng xã hội</b>.</p>
+  <p id="lead" class="lead">Ứng dụng này chạy bên trong super app <b>Mạng xã hội</b>.</p>
 
   <div id="bad" class="error" hidden>Link không hợp lệ hoặc thiếu thông tin ứng dụng.</div>
 
@@ -78,7 +78,16 @@
       ? 'intent://open?url=' + enc + '#Intent;scheme=synergy;package=' + ANDROID_PACKAGE +
         ';S.browser_fallback_url=' + encodeURIComponent(document.getElementById('android').href) + ';end'
       : 'synergy://open?url=' + enc;
-    document.getElementById('openExpo').href = 'exp://u.expo.dev/' + EXPO_PROJECT + '/--/open?url=' + enc + '&' + EXPO_QUERY;
+    var expoLink = 'exp://u.expo.dev/' + EXPO_PROJECT + '/--/open?url=' + enc + '&' + EXPO_QUERY;
+    document.getElementById('openExpo').href = expoLink;
+
+    // Test phase: there is no iOS build yet, so on iPhone/iPad jump straight into Expo Go
+    // (Safari asks "Open in Expo Go?"). The buttons stay as a fallback if the user cancels.
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (ios) {
+      document.getElementById('lead').textContent = 'Đang mở bằng Expo Go… Nếu không tự mở, bấm "Mở bằng Expo Go" bên dưới.';
+      setTimeout(function () { location.href = expoLink; }, 300);
+    }
   })();
 </script>
 </body>
