@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mở ứng dụng · Synergy</title>
+  <meta name="robots" content="noindex">
+  <style>
+    :root { --primary: #1F3FA0; --primary-dark: #16307D; --primary-soft: #EEF2FF; --bg: #F5F7FC; --card: #FFFFFF;
+            --border: #E2E8F0; --text: #0F172A; --text-2: #475569; --muted: #64748B; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 440px; margin: 0 auto; padding: 40px 16px 32px; }
+    .logo { width: 64px; height: 64px; border-radius: 18px; background: var(--primary); display: grid; place-items: center; margin: 0 auto 16px; }
+    h1 { font-size: 22px; line-height: 28px; text-align: center; margin: 0 0 6px; }
+    p.lead { text-align: center; color: var(--text-2); margin: 0 0 24px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 16px; display: grid; gap: 12px; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 8px; height: 50px; border-radius: 14px; font-weight: 600;
+           font-size: 16px; text-decoration: none; border: 1px solid transparent; }
+    .btn.primary { background: var(--primary); color: #fff; }
+    .btn.primary:active { background: var(--primary-dark); }
+    .btn.soft { background: var(--primary-soft); color: var(--primary); }
+    .btn.outline { background: #fff; color: var(--primary); border-color: #CBD5E1; }
+    .section { font-size: 12px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); margin: 24px 4px 8px; }
+    .note { font-size: 13px; color: var(--muted); text-align: center; margin: 4px 0 0; }
+    .pkg { font-size: 12px; color: var(--muted); word-break: break-all; text-align: center; margin-top: 24px; }
+    .error { background: #FEE2E2; color: #DC2626; border-radius: 14px; padding: 12px 14px; text-align: center; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="logo" aria-hidden="true">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M6.6 7.2 9.6 10M17.4 7.2 14.4 10M6.6 16.8 9.6 14M17.4 16.8 14.4 14"/></svg>
+  </div>
+  <h1>Mở ứng dụng trong Synergy</h1>
+  <p class="lead">Ứng dụng này chạy bên trong super app <b>Mạng xã hội</b>.</p>
+
+  <div id="bad" class="error" hidden>Link không hợp lệ hoặc thiếu thông tin ứng dụng.</div>
+
+  <div id="actions" hidden>
+    <div class="card">
+      <a id="openApp" class="btn primary" href="#">Mở trong ứng dụng</a>
+      <p class="note">Đã cài Mạng xã hội? Bấm nút trên để mở ngay.</p>
+    </div>
+
+    <div class="section">Chưa có ứng dụng?</div>
+    <div class="card">
+      <a id="android" class="btn outline" href="https://expo.dev/accounts/quannguyen98/projects/mang-xa-hoi/builds/5a427dcf-706a-4270-890d-420d40d504d8">Tải bản Android (APK)</a>
+      <p class="note">Bản iOS sẽ có sau. Trên iPhone, dùng cách thử nghiệm bên dưới.</p>
+    </div>
+
+    <div class="section">Bản thử nghiệm (Expo Go)</div>
+    <div class="card">
+      <a id="openExpo" class="btn soft" href="#">Mở bằng Expo Go</a>
+      <p class="note">Cần cài <a href="https://apps.apple.com/app/expo-go/id982107779">Expo Go (iOS)</a> hoặc
+        <a href="https://play.google.com/store/apps/details?id=host.exp.exponent">Expo Go (Android)</a>.</p>
+    </div>
+
+    <p id="pkg" class="pkg"></p>
+  </div>
+</main>
+<script>
+  (function () {
+    var EXPO_PROJECT = '185baafb-f4de-494c-88bd-7091b98e4076';
+    var EXPO_QUERY = 'channel-name=preview&runtime-version=exposdk%3A57.0.0';
+    var ANDROID_PACKAGE = 'com.synergy.app';
+
+    var url = new URLSearchParams(location.search).get('url');
+    if (!url || !/^https?:\/\/\S+$/i.test(url)) { document.getElementById('bad').hidden = false; return; }
+    document.getElementById('actions').hidden = false;
+    document.getElementById('pkg').textContent = url;
+
+    var enc = encodeURIComponent(url);
+    var android = /android/i.test(navigator.userAgent);
+    // Android: intent:// falls back to the APK page if the app is missing; elsewhere use the custom scheme.
+    document.getElementById('openApp').href = android
+      ? 'intent://open?url=' + enc + '#Intent;scheme=synergy;package=' + ANDROID_PACKAGE +
+        ';S.browser_fallback_url=' + encodeURIComponent(document.getElementById('android').href) + ';end'
+      : 'synergy://open?url=' + enc;
+    document.getElementById('openExpo').href = 'exp://u.expo.dev/' + EXPO_PROJECT + '/--/open?url=' + enc + '&' + EXPO_QUERY;
+  })();
+</script>
+</body>
+</html>
